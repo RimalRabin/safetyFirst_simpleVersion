@@ -25,8 +25,7 @@ export const Header = ({
       </div>
 
       {/* Centre — version label, question counter, progress bar */}
-      <div className="flex flex-col items-center gap-1">
-        <span className="font-bold text-white text-xl">Simple Version</span>
+<div className="flex flex-col items-center gap-1 text-center">        <span className="font-bold text-white text-xl">Simple Version</span>
         <span className="text-white/70 text-sm">
           Question {currentIndex + 1} of {totalQuestions} | {progressPercent}% complete
         </span>
