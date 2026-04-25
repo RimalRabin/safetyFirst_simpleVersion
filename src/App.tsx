@@ -1,9 +1,7 @@
+import { SimpleQuestionnaire } from "@/pages/SimpleQuestionnaire"
+
 function App() {
-  return (
-    <div>
-      <h1>safety_first</h1>
-    </div>
-  )
+  return <SimpleQuestionnaire />
 }
 
 export default App

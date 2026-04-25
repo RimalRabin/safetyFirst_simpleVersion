@@ -1,22 +1,119 @@
 import { useState } from "react"
+import { type Question } from "@/types"
 
-const TOTAL_QUESTIONS = 10
-
-const answerOptions = [
-  { id: "yes",     label: "Yes — fully implemented" },
-  { id: "partial", label: "Partial — in progress or informal" },
-  { id: "no",      label: "No — not yet implemented" },
+const placeholderQuestions: Question[] = [
+  {
+    id: "org_screen_1",
+    category: "organisational",
+    type: "screening",
+    text: "Have you ever done any kind of check for online risks in your business?",
+    options: [
+      { id: "yes", label: "Yes" },
+      { id: "sometimes", label: "Sometimes / Not sure" },
+      { id: "no", label: "No" },
+    ],
+    conditionalNext: {
+      yes: "org_screen_2a",
+      sometimes: "org_screen_2b",
+      no: "org_screen_2b",
+    },
+  },
+  {
+    id: "org_screen_2a",
+    category: "organisational",
+    type: "screening",
+    text: "Do you have any simple written rules or plan for what to do if something goes wrong online?",
+    options: [
+      { id: "yes", label: "Yes" },
+      { id: "no", label: "No" },
+    ],
+  },
+  {
+    id: "org_screen_2b",
+    category: "organisational",
+    type: "screening",
+    text: "Would it help to start with a simple list of your most important business things?",
+    options: [
+      { id: "yes", label: "Yes" },
+      { id: "no", label: "No" },
+    ],
+  },
+  {
+    id: "people_screen_1",
+    category: "people",
+    type: "screening",
+    text: "Do you have any staff, team members, or contractors who help with the business?",
+    options: [
+      { id: "yes", label: "Yes" },
+      { id: "no", label: "No (just me)" },
+    ],
+    conditionalNext: {
+      yes: "people_screen_2a",
+      no: "people_screen_2b",
+    },
+  },
+  {
+    id: "people_screen_2a",
+    category: "people",
+    type: "screening",
+    text: "Do you talk with your team about staying safe online?",
+    options: [
+      { id: "yes", label: "Yes" },
+      { id: "sometimes", label: "Sometimes" },
+      { id: "no", label: "No" },
+    ],
+  },
+  {
+    id: "people_screen_2b",
+    category: "people",
+    type: "screening",
+    text: "Do you ever work with freelancers or contractors who need access to your email, files, or systems?",
+    options: [
+      { id: "yes", label: "Yes" },
+      { id: "no", label: "No" },
+    ],
+  },
 ]
+
+const TOTAL_QUESTIONS = placeholderQuestions.length
 
 export const SimpleQuestionnaire = (): JSX.Element => {
   const [currentIndex, setCurrentIndex] = useState<number>(0)
-  const [answers, setAnswers] = useState<Record<number, string>>({})
+  const [answers, setAnswers] = useState<Record<string, string>>({})
 
+  const currentQuestion = placeholderQuestions[currentIndex]
   const progressPercent = Math.round((currentIndex / TOTAL_QUESTIONS) * 100)
-  const selectedAnswer = answers[currentIndex] ?? ""
+  const selectedAnswer = answers[currentQuestion.id] ?? ""
 
   const handleSelectAnswer = (answerId: string) => {
-    setAnswers((prev) => ({ ...prev, [currentIndex]: answerId }))
+    setAnswers((prev) => ({ ...prev, [currentQuestion.id]: answerId }))
+  }
+
+  const handleNext = () => {
+    if (!selectedAnswer) return
+
+    // check if this question has conditional routing
+    const nextId = currentQuestion.conditionalNext?.[selectedAnswer]
+
+    if (nextId) {
+      // find the index of the next question by id
+      const nextIndex = placeholderQuestions.findIndex((q) => q.id === nextId)
+      if (nextIndex !== -1) {
+        setCurrentIndex(nextIndex)
+        return
+      }
+    }
+
+    // no conditional routing — just go to next in sequence
+    if (currentIndex < TOTAL_QUESTIONS - 1) {
+      setCurrentIndex((prev) => prev + 1)
+    }
+  }
+
+  const handleBack = () => {
+    if (currentIndex > 0) {
+      setCurrentIndex((prev) => prev - 1)
+    }
   }
 
   return (
@@ -53,14 +150,14 @@ export const SimpleQuestionnaire = (): JSX.Element => {
 
       {/* STEP DOTS */}
       <div className="flex justify-center gap-2 py-5">
-        {Array.from({ length: TOTAL_QUESTIONS }).map((_, index) => (
+        {placeholderQuestions.map((q, index) => (
           <button
-            key={index}
+            key={q.id}
             onClick={() => setCurrentIndex(index)}
             className={`w-3 h-3 rounded-full transition-all duration-200 ${
               index === currentIndex
                 ? "bg-white scale-125"
-                : answers[index]
+                : answers[q.id]
                 ? "bg-[#00bfa5]"
                 : "bg-white/30"
             }`}
@@ -78,21 +175,21 @@ export const SimpleQuestionnaire = (): JSX.Element => {
             <span className="text-white font-medium text-lg">
               Question {currentIndex + 1}
             </span>
-            <span className="text-white/80 text-sm font-mono">
-              ISO 27001
+            <span className="text-white/80 text-sm font-mono capitalize">
+              {currentQuestion.category}
             </span>
           </div>
 
-          {/* Question text — placeholder for MongoDB */}
-          <div className="px-8 pt-8 pb-6 min-h-[120px] flex items-center">
-            <p className="text-gray-300 text-base italic">
-              Question text will load from the database here...
+          {/* Question text */}
+          <div className="px-8 pt-8 pb-6 min-h-[100px]">
+            <p className="text-[#1e2937] text-lg font-semibold leading-snug">
+              {currentQuestion.text}
             </p>
           </div>
 
-          {/* ANSWER OPTIONS */}
+          {/* ANSWER OPTIONS — fully dynamic */}
           <div className="px-8 pb-8 flex flex-col gap-4">
-            {answerOptions.map((option) => {
+            {currentQuestion.options.map((option) => {
               const isSelected = selectedAnswer === option.id
               return (
                 <button
@@ -104,7 +201,6 @@ export const SimpleQuestionnaire = (): JSX.Element => {
                       : "border-gray-200 bg-white hover:border-gray-300"
                   }`}
                 >
-                  {/* Checkbox */}
                   <div className={`w-5 h-5 rounded flex-shrink-0 flex items-center justify-center border-2 transition-colors ${
                     isSelected
                       ? "bg-[#00bfa5] border-[#00bfa5]"
@@ -126,6 +222,28 @@ export const SimpleQuestionnaire = (): JSX.Element => {
                 </button>
               )
             })}
+          </div>
+
+          {/* NAVIGATION */}
+          <div className="px-8 py-5 bg-gray-50 border-t border-gray-100 flex items-center justify-between">
+            <button
+              onClick={handleBack}
+              disabled={currentIndex === 0}
+              className="text-gray-500 font-medium text-base disabled:opacity-30 hover:text-[#0a2540] transition-colors cursor-pointer"
+            >
+              ← Back
+            </button>
+            <button
+              onClick={handleNext}
+              disabled={!selectedAnswer}
+              className={`px-8 py-3 rounded-xl font-medium text-white text-base transition-all ${
+                selectedAnswer
+                  ? "bg-[#ff6b00] hover:bg-[#ff6b00]/90 cursor-pointer"
+                  : "bg-gray-300 cursor-not-allowed"
+              }`}
+            >
+              Next →
+            </button>
           </div>
 
         </div>
