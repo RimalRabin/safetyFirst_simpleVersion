@@ -2,11 +2,22 @@ import { useState } from "react"
 
 const TOTAL_QUESTIONS = 10
 
+const answerOptions = [
+  { id: "yes",     label: "Yes — fully implemented" },
+  { id: "partial", label: "Partial — in progress or informal" },
+  { id: "no",      label: "No — not yet implemented" },
+]
+
 export const SimpleQuestionnaire = (): JSX.Element => {
   const [currentIndex, setCurrentIndex] = useState<number>(0)
   const [answers, setAnswers] = useState<Record<number, string>>({})
 
   const progressPercent = Math.round((currentIndex / TOTAL_QUESTIONS) * 100)
+  const selectedAnswer = answers[currentIndex] ?? ""
+
+  const handleSelectAnswer = (answerId: string) => {
+    setAnswers((prev) => ({ ...prev, [currentIndex]: answerId }))
+  }
 
   return (
     <div className="min-h-screen bg-[#0a2540] flex flex-col font-['Inter',Helvetica]">
@@ -77,6 +88,44 @@ export const SimpleQuestionnaire = (): JSX.Element => {
             <p className="text-gray-300 text-base italic">
               Question text will load from the database here...
             </p>
+          </div>
+
+          {/* ANSWER OPTIONS */}
+          <div className="px-8 pb-8 flex flex-col gap-4">
+            {answerOptions.map((option) => {
+              const isSelected = selectedAnswer === option.id
+              return (
+                <button
+                  key={option.id}
+                  onClick={() => handleSelectAnswer(option.id)}
+                  className={`flex items-center gap-4 w-full text-left px-5 py-4 rounded-xl border-2 transition-all duration-150 ${
+                    isSelected
+                      ? "border-[#00bfa5] bg-[#00bfa5]/10"
+                      : "border-gray-200 bg-white hover:border-gray-300"
+                  }`}
+                >
+                  {/* Checkbox */}
+                  <div className={`w-5 h-5 rounded flex-shrink-0 flex items-center justify-center border-2 transition-colors ${
+                    isSelected
+                      ? "bg-[#00bfa5] border-[#00bfa5]"
+                      : "border-gray-400"
+                  }`}>
+                    {isSelected && (
+                      <img
+                        src="/figmaAssets/check-small.svg"
+                        alt="checked"
+                        className="w-5 h-5"
+                      />
+                    )}
+                  </div>
+                  <span className={`text-base font-medium ${
+                    isSelected ? "text-[#0a2540]" : "text-gray-700"
+                  }`}>
+                    {option.label}
+                  </span>
+                </button>
+              )
+            })}
           </div>
 
         </div>
