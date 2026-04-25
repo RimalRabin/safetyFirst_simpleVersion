@@ -28,7 +28,6 @@ export const SimpleQuestionnaire = (): JSX.Element => {
           <span className="text-white/70 text-sm">
             Question {currentIndex + 1} of {TOTAL_QUESTIONS} | {progressPercent}% complete
           </span>
-          {/* Progress bar */}
           <div className="w-64 h-2 bg-white/20 rounded-full overflow-hidden">
             <div
               className="h-full bg-[#00bfa5] rounded-full transition-all duration-300"
@@ -58,6 +57,30 @@ export const SimpleQuestionnaire = (): JSX.Element => {
           />
         ))}
       </div>
+
+      {/* MAIN CONTENT */}
+      <main className="flex-1 flex items-start justify-center px-6 py-8">
+        <div className="w-full max-w-2xl bg-white rounded-2xl shadow-2xl overflow-hidden">
+
+          {/* Question header band */}
+          <div className="bg-[#00bfa5] px-8 py-4 flex items-center justify-between">
+            <span className="text-white font-medium text-lg">
+              Question {currentIndex + 1}
+            </span>
+            <span className="text-white/80 text-sm font-mono">
+              ISO 27001
+            </span>
+          </div>
+
+          {/* Question text — placeholder for MongoDB */}
+          <div className="px-8 pt-8 pb-6 min-h-[120px] flex items-center">
+            <p className="text-gray-300 text-base italic">
+              Question text will load from the database here...
+            </p>
+          </div>
+
+        </div>
+      </main>
 
     </div>
   )
