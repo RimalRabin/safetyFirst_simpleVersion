@@ -1,7 +1,64 @@
+import { useState } from "react"
+
+const TOTAL_QUESTIONS = 10
+
 export const SimpleQuestionnaire = (): JSX.Element => {
+  const [currentIndex, setCurrentIndex] = useState<number>(0)
+  const [answers, setAnswers] = useState<Record<number, string>>({})
+
+  const progressPercent = Math.round((currentIndex / TOTAL_QUESTIONS) * 100)
+
   return (
-    <div>
-      Simple Questionnaire
+    <div className="min-h-screen bg-[#0a2540] flex flex-col font-['Inter',Helvetica]">
+
+      {/* HEADER */}
+      <header className="flex items-center justify-between px-8 py-4 border-b border-white/10">
+        <div className="flex items-center gap-3">
+          <img
+            className="w-10 h-10"
+            alt="Shield"
+            src="/figmaAssets/shield-off.svg"
+          />
+          <span className="font-bold text-white text-2xl">
+            _safety_first
+          </span>
+        </div>
+        <div className="flex flex-col items-center gap-1">
+          <span className="font-bold text-white text-xl">Simple Version</span>
+          <span className="text-white/70 text-sm">
+            Question {currentIndex + 1} of {TOTAL_QUESTIONS} | {progressPercent}% complete
+          </span>
+          {/* Progress bar */}
+          <div className="w-64 h-2 bg-white/20 rounded-full overflow-hidden">
+            <div
+              className="h-full bg-[#00bfa5] rounded-full transition-all duration-300"
+              style={{ width: `${progressPercent}%` }}
+            />
+          </div>
+        </div>
+        <button className="bg-[#ff6b00] hover:bg-[#ff6b00]/90 text-white font-medium px-5 py-2 rounded cursor-pointer">
+          Exit
+        </button>
+      </header>
+
+      {/* STEP DOTS */}
+      <div className="flex justify-center gap-2 py-5">
+        {Array.from({ length: TOTAL_QUESTIONS }).map((_, index) => (
+          <button
+            key={index}
+            onClick={() => setCurrentIndex(index)}
+            className={`w-3 h-3 rounded-full transition-all duration-200 ${
+              index === currentIndex
+                ? "bg-white scale-125"
+                : answers[index]
+                ? "bg-[#00bfa5]"
+                : "bg-white/30"
+            }`}
+            aria-label={`Go to question ${index + 1}`}
+          />
+        ))}
+      </div>
+
     </div>
   )
 }
