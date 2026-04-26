@@ -1,9 +1,11 @@
-import { useState } from "react"
-import { useQuestions }  from "@/hooks/useQuestions"
-import { Header }        from "@/components/Header"
-import { StepDots }      from "@/components/StepDots"
-import { QuestionCard }  from "@/components/QuestionCard"
-import { Navigation }    from "@/components/Navigation"
+import { useState, useMemo }      from "react"
+import { useQuestions }           from "@/hooks/useQuestions"
+import { Header }                 from "@/components/Header"
+import { QuestionNav }            from "@/components/QuestionNav"
+import { QuestionCard }           from "@/components/QuestionCard"
+import { Navigation }             from "@/components/Navigation"
+import { CategoryIntroCard }      from "@/components/CategoryIntroCard"
+import { ResultsScreen }          from "@/components/ResultsScreen"
 
 export const SimpleQuestionnaire = (): JSX.Element => {
   const { questions, loading, error } = useQuestions()
