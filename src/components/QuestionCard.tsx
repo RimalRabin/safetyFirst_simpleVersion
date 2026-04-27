@@ -1,7 +1,7 @@
 import { type Question } from "@/types"
 
 interface QuestionCardProps {
-  question: Question
+  question:       Question
   selectedAnswer: string
   onSelectAnswer: (answerId: string) => void
 }
@@ -14,24 +14,19 @@ export const QuestionCard = ({
   return (
     <div className="w-full max-w-2xl bg-white rounded-2xl shadow-2xl overflow-hidden">
 
-      {/* Teal header band */}
       <div className="bg-[#00bfa5] px-8 py-4 flex items-center justify-between">
-        <span className="text-white font-medium text-lg">
-          Question
-        </span>
+        <span className="text-white font-medium text-lg">Question</span>
         <span className="text-white/80 text-sm font-mono capitalize">
           {question.category}
         </span>
       </div>
 
-      {/* Question text */}
       <div className="px-8 pt-8 pb-6 min-h-[100px]">
         <p className="text-[#1e2937] text-lg font-semibold leading-snug">
           {question.text}
         </p>
       </div>
 
-      {/* Answer options — fully dynamic */}
       <div className="px-8 pb-8 flex flex-col gap-4">
         {question.options.map((option) => {
           const isSelected = selectedAnswer === option.id
@@ -45,7 +40,6 @@ export const QuestionCard = ({
                   : "border-gray-200 bg-white hover:border-gray-300"
               }`}
             >
-              {/* Checkbox */}
               <div className={`w-5 h-5 rounded flex-shrink-0 flex items-center justify-center border-2 transition-colors ${
                 isSelected
                   ? "bg-[#00bfa5] border-[#00bfa5]"
